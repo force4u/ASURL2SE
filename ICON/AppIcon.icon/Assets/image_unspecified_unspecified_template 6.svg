@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--Generator: Apple Native CoreSVG 362-->
+<!DOCTYPE svg
+PUBLIC "-//W3C//DTD SVG 1.1//EN"
+       "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 1024 1024">
+ <defs>
+  <linearGradient id="SVGID_1_" x1="372.166" y1="-1164.34" x2="237.547" y2="-1242.06" gradientUnits="userSpaceOnUse" gradientTransform="matrix(-0.9659258 -0.258819 0.258819 -0.9659258 1107.2281494 -830.9508057)">
+   <stop offset="0" stop-color="#aaaaaa" stop-opacity="1"/>
+   <stop offset="0.0726448" stop-color="#bdbdbd" stop-opacity="1"/>
+   <stop offset="0.207153" stop-color="#dadada" stop-opacity="1"/>
+   <stop offset="0.341054" stop-color="#eeeeee" stop-opacity="1"/>
+   <stop offset="0.472838" stop-color="#fbfbfb" stop-opacity="1"/>
+   <stop offset="0.6" stop-color="#ffffff" stop-opacity="1"/>
+   <stop offset="0.720525" stop-color="#fcfcfc" stop-opacity="1"/>
+   <stop offset="0.799503" stop-color="#f4f4f4" stop-opacity="1"/>
+   <stop offset="0.866558" stop-color="#e5e5e5" stop-opacity="1"/>
+   <stop offset="0.926921" stop-color="#cfcfcf" stop-opacity="1"/>
+   <stop offset="0.98232" stop-color="#b4b4b4" stop-opacity="1"/>
+   <stop offset="1" stop-color="#aaaaaa" stop-opacity="1"/>
+  </linearGradient>
+ </defs>
+ <g/>
+ <g id="scroll.top">
+  <path d="M320.553 324.498c2.96161-3.47589 6.0506-6.84158 9.17709-10.1422c2.89426-3.05554 5.83502-6.06491 8.79361-9.05783c3.51068-3.55524 7.04456-7.08624 10.5776-10.6192l-0.0001221-3.05e-05l154.469-154.469c18.3585-18.3585 34.4593-32.6768 60.3734-36.0928c23.2998-3.07927 47.1741 5.05072 63.8793 21.7559c16.7051 16.7052 24.8351 40.5796 21.7558 63.8794c-3.41595 25.9141-17.7343 42.0149-36.0928 60.3733L446.968 416.643c-1.05661 1.05667-2.59674 1.46936-4.0401 1.08267c-2.33243-0.624939-3.6553-3.09055-2.87588-5.37601c9.26355-27.1652 3.0629-58.4387-18.6024-80.1038c0 0-9.16e-05 0-6.1e-05-0.0001221C393.948 304.744 350.963 302.161 320.553 324.498z" fill="url(#SVGID_1_)" style="fill:url(#SVGID_1_);"/>
+ </g>
+</svg>

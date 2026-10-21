@@ -1,0 +1,98 @@
+{
+  "color-space-for-untagged-svg-colors" : "display-p3",
+  "fill" : {
+    "solid" : "display-p3:0.43364,0.93155,1.00000,1.00000"
+  },
+  "groups" : [
+    {
+      "layers" : [
+        {
+          "image-name" : "image_unspecified_unspecified_template 6.svg",
+          "name" : "image_unspecified_unspecified_template 6",
+          "position" : {
+            "scale" : 1,
+            "translation-in-points" : [
+              0.0001772824568888609,
+              -42
+            ]
+          }
+        },
+        {
+          "image-name" : "image_unspecified_unspecified_template 5.svg",
+          "name" : "image_unspecified_unspecified_template 5",
+          "position" : {
+            "scale" : 1,
+            "translation-in-points" : [
+              0.0001772824568888609,
+              -42
+            ]
+          }
+        },
+        {
+          "image-name" : "image_unspecified_unspecified_template 3.svg",
+          "name" : "image_unspecified_unspecified_template 3",
+          "position" : {
+            "scale" : 1,
+            "translation-in-points" : [
+              0.0001772824568888609,
+              -42
+            ]
+          }
+        },
+        {
+          "image-name" : "image_unspecified_unspecified_template 4.svg",
+          "name" : "image_unspecified_unspecified_template 4",
+          "position" : {
+            "scale" : 1,
+            "translation-in-points" : [
+              -11,
+              -87.89257600000008
+            ]
+          }
+        },
+        {
+          "image-name" : "image_unspecified_unspecified_template 7.svg",
+          "name" : "image_unspecified_unspecified_template 7",
+          "position" : {
+            "scale" : 1,
+            "translation-in-points" : [
+              -11,
+              -54.95162600000015
+            ]
+          }
+        }
+      ],
+      "name" : "ScriptI",
+      "shadow" : {
+        "kind" : "neutral",
+        "opacity" : 0.5
+      },
+      "translucency" : {
+        "enabled" : true,
+        "value" : 0.3
+      }
+    },
+    {
+      "layers" : [
+        {
+          "image-name" : "image_unspecified_unspecified_template.svg",
+          "name" : "image_unspecified_unspecified_template"
+        }
+      ],
+      "name" : "wrench",
+      "shadow" : {
+        "kind" : "neutral",
+        "opacity" : 0.5
+      },
+      "translucency" : {
+        "enabled" : true,
+        "value" : 0.3
+      }
+    }
+  ],
+  "supported-platforms" : {
+    "squares" : [
+      "macOS"
+    ]
+  }
+}
