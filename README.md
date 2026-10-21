@@ -23,7 +23,9 @@
 ## なんのためのアプリ?
 
 作者の環境では、macOS 27 の Script Editor が `applescript:` スキームのURLを受け取らなくなりました(作者が確認した範囲の話です)。
+https://note.com/quicktimer/n/n75a691a7aaff  
 Chromium 系のブラウザも、このURLを外に渡さなくなっています(こちらも作者が確認済み)。
+https://note.com/quicktimer/n/n278102a182f3  
 
 Web ページに「Script Editor で開く」リンクがあっても、そのままでは開けないので、
 **代わりにURLを受け取って、中身のスクリプトを Script Editor の新規書類に入れる**のが、このアプリの仕事です。
