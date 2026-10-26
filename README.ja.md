@@ -4,7 +4,7 @@
 
 `applescript:` のURLを受け取って、Script Editor の新規書類にしてくれるだけの、小さな macOS アプリ。
 
-- バージョン: 0.1de
+- バージョン: 0.2
 - バンドルID: `com.cocolog-nifty.quicktimer.ASURL2SE`
 - ビルドすると `ASURL2SE.app` ができる
 - ライセンス: CC0 1.0(パブリックドメイン)
