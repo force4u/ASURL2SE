@@ -4,7 +4,7 @@ English | [日本語](README.ja.md)
 
 A tiny macOS app that catches `applescript:` URLs and turns them into a new Script Editor document.
 
-- Version: 0.1de
+- Version: 0.2
 - Bundle ID: `com.cocolog-nifty.quicktimer.ASURL2SE`
 - Building it produces `ASURL2SE.app`
 - License: CC0 1.0 (public domain)
