@@ -1,115 +1,127 @@
 # ASURL2SE
 
-`applescript:` のURLを受け取って、Script Editor の新規書類にしてくれるだけの、小さな macOS アプリ。
+English | [日本語](README.ja.md)
 
-- バージョン: 0.1
-- バンドルID: `com.cocolog-nifty.quicktimer.ASURL2SE`
-- ビルドすると `ASURL2SE.app` ができる
-- ライセンス: CC0 1.0(パブリックドメイン)
+A tiny macOS app that catches `applescript:` URLs and turns them into a new Script Editor document.
 
----
-
-## ⚠️ このアプリは Claude が作りました
-
-**ソースコードも、この README も、AI の Claude(Anthropic)が書いたものです。**
-作者(人間)は、仕様を決めて、実機で動作確認をして、バグ報告をしました。コードを書いたのは Claude です(作者が出したのは、仕様の案と、AppleScript の下書きくらいです)。
-
-- 作成時のセッション設定のモデルID: `claude-sonnet-5-5`(実際に応答したモデルは、違う可能性があります)
-- Claude は、このアプリをビルドも実行もできない環境でコードを書きました。動作確認は、すべて作者の Mac での手作業です。
-- なので、バグがあるかもしれません。使うときは、自己責任でお願いします。
+- Version: 0.1de
+- Bundle ID: `com.cocolog-nifty.quicktimer.ASURL2SE`
+- Building it produces `ASURL2SE.app`
+- License: CC0 1.0 (public domain)
 
 ---
 
-## なんのためのアプリ?
+## ⚠️ This app was made by Claude
 
-作者の環境では、macOS 27 の Script Editor が `applescript:` スキームのURLを受け取らなくなりました(作者が確認した範囲の話です)。
-https://note.com/quicktimer/n/n75a691a7aaff  
-Chromium 系のブラウザも、このURLを外に渡さなくなっています(こちらも作者が確認済み)。
-https://note.com/quicktimer/n/n278102a182f3  
+**The source code and this README were written by Claude, an AI made by Anthropic.**
+The human author decided what the app should do, tested it on a real Mac, and reported bugs. Claude wrote the code. (All the author supplied was the spec ideas and a rough AppleScript draft.)
 
-Web ページに「Script Editor で開く」リンクがあっても、そのままでは開けないので、
-**代わりにURLを受け取って、中身のスクリプトを Script Editor の新規書類に入れる**のが、このアプリの仕事です。
+- Model ID configured for the session that wrote it: `claude-sonnet-5-5` (the model that actually answered may have been a different one)
+- Claude wrote the code in an environment where it could not build or run the app. Everything was tested by hand on the author's Mac.
+- So there may be bugs. Use it at your own risk.
 
-この仕様の変更自体は、ClickFix 詐欺のような手口を防ぐためのものだと、作者は理解していて、反対ではありません。
-このアプリは、「内容を見て、自分で判断して、自分で実行する」ための、自分用の道具です。
+---
 
-## できること
+## What is this for?
 
-| きっかけ | 動き |
+On the author's Mac, Script Editor in macOS 27 no longer accepts the `applescript:` URL scheme (this is what the author observed). Chromium-based browsers also stopped handing these URLs to other apps (also confirmed by the author).
+
+That means "Open in Script Editor" links on web pages don't work anymore. This app **receives the URL on Script Editor's behalf and puts the script from the URL into a new Script Editor document.**
+
+The author understands the change is meant to stop ClickFix-style scams, and doesn't object to it. This app is a personal tool for "look at the contents, decide for yourself, and run it yourself."
+
+## What it does
+
+| Trigger | What happens |
 |---|---|
-| ブラウザで `applescript:` のリンクをクリック | URLをデコードして、Script Editor に新規書類を作る |
-| `.inetloc` ファイルをダブルクリック(Finder 経由) | 同上 |
-| `.inetloc` をアプリのアイコンにドロップ | 同上 |
-| クリップボードに `applescript:` のURLがある状態でアプリを起動 | 同上 |
-| クリップボードに普通のテキストがある状態でアプリを起動 | そのテキストを、Script Editor の新規書類に入れる(AppleScript でなくても OK) |
-| クリップボードが空の状態でアプリを起動 | 設定画面が開く |
-| Option キーを押しながらアプリを起動 | 設定画面が開く |
-| すでに起動中に Dock のアイコンをクリック | 上の「起動」と同じ動き |
-| メニューの「設定…」(⌘,) | 設定画面が開く |
+| Click an `applescript:` link in a browser | Decodes the URL and creates a new Script Editor document |
+| Double-click an `.inetloc` file (via Finder) | Same |
+| Drop an `.inetloc` file onto the app icon | Same |
+| Launch the app while the clipboard holds an `applescript:` URL | Same |
+| Launch the app while the clipboard holds plain text | Puts that text into a new Script Editor document (it doesn't have to be AppleScript) |
+| Launch the app while the clipboard is empty | Opens the settings window |
+| Launch the app while holding the Option key | Opens the settings window |
+| Click the Dock icon while the app is already running | Same as launching it |
+| Menu: Settings… (⌘,) | Opens the settings window |
 
-- 処理が終わってから **60秒後に自動で終了**します。設定画面を開いている間は、終了しません。閉じると、60秒を数え直します。
-- 動作確認をしたのは、Safari でのクリックと、`.inetloc` のダブルクリックとドロップです。Firefox や Arc などは、まだ試していません。
+- The app **quits by itself 60 seconds** after it finishes handling something. It doesn't count down while the settings window is open, and starts over from 60 when you close it.
+- What the author has actually tested: clicking links in Safari, and double-clicking / dropping `.inetloc` files. Firefox, Arc and others haven't been tried.
 
-### 設定画面でできること
+### What the settings window does
 
-- `applescript:` URL の送信先(既定のアプリ)の変更。一覧には、このアプリのほかに、`applescript:` を受け取れるアプリが出ます。
-- 「開く前に内容を確認する」かどうかの切り替え(URLで届いたとき / クリップボードから開くとき)。初期値は、どちらも「確認しない」です。
-- 設定は `UserDefaults` に保存されます。初期値に戻すときは、`defaults delete com.cocolog-nifty.quicktimer.ASURL2SE` を実行してください。
+- Changes the destination (default app) for `applescript:` URLs. The list shows this app plus any other app that can receive `applescript:` URLs.
+- Turns the "review before opening" dialog on or off (separately for URLs and for the clipboard). Both are **off** by default.
+- Settings are stored in `UserDefaults`. To reset them, run `defaults delete com.cocolog-nifty.quicktimer.ASURL2SE`.
 
-## 安全面のこと
+## Safety notes
 
-- **スクリプトは、実行しません。保存もしません。** Script Editor の新規書類に、テキストとして入れるだけです。実行するかどうかは、中身を見て、自分で決めます。
-- URLの `action` / `name` / `directory` / `appid` は、無視します。`insert` / `append` も、常に「新規書類」として扱います。保存先やファイル名を、受信した値で決めないためです。
-- 受信したテキストは、AppleScript のソースに文字列として埋め込まず、`osascript` の引数(データ)として渡しています。
-- **確認ダイアログは、初期値で「出さない」にしています。** 自分専用だからです。ほかの人が使う場合や、Web のリンクを、よく見ないでクリックしてしまう人は、設定画面で「確認する」をオンにしておいてください。
+- **It never runs the script, and never saves it.** It only puts the text into a new Script Editor document. Whether to run it is up to you, after you've read it.
+- The URL's `action` / `name` / `directory` / `appid` parameters are ignored. `insert` / `append` are treated as "new document" too. The received values never decide where something is saved or what it's called.
+- The received text is not pasted into any AppleScript source. It's passed to `osascript` as an argument (data).
+- **The review dialog is off by default**, because this is a personal tool. If other people will use it, or if you tend to click links without looking closely, turn "review before opening" on in the settings window.
 
-## 動作環境
+## Requirements
 
-- macOS 27 以降(Apple Silicon のみ。Intel は考えていません)
-- ビルドには Xcode が必要です。
+- macOS 27 or later (Apple Silicon only; Intel isn't considered)
+- Xcode to build it
 
-## ビルド方法
+## Display language
 
-1. このリポジトリの Xcode プロジェクトを開く
-2. Signing は **Sign to Run Locally**(ad-hoc 署名)のまま、`⌘R` で実行する
-3. できた `ASURL2SE.app` を `/Applications` に置いて、設定画面で、送信先をそのアプリに向ける
+Menus, dialogs and the settings window are shown in Japanese if your primary macOS language (System Settings → General → Language & Region, the top one) is Japanese, and in English otherwise.
 
-Apple Developer Program への登録は、いりません。自分の Mac でビルドして使う前提です。
+To try a different language for this app only, run this in Terminal and relaunch the app:
 
-### Xcode プロジェクトの設定メモ(一から作り直す場合)
+```
+defaults write com.cocolog-nifty.quicktimer.ASURL2SE AppleLanguages '("ja")'
+```
 
-- テンプレートは macOS → App(Swift / Storyboard)。作成後、`Main.storyboard`、`ViewController.swift`、テンプレートの `AppDelegate.swift` を削除し、Build Settings の「Main storyboard file base name」を空にする。
-- **App Sandbox は、無効にする。** 有効のままだと、`osascript` から Script Editor への Apple Event が通りません(`-600` のエラーになりました)。
-- Info タブ → URL Types に、URL Schemes `applescript`、Role `Viewer` を追加する。
-- Info タブに `Privacy - AppleEvents Sending Usage Description`(`NSAppleEventsUsageDescription`)を追加する。
-- Architectures は `arm64`。
-- テンプレートに iOS 関連の SDK のリンクが入っていたら、外しておく。(作者の環境では、Sandbox を切るのと同時に外したので、どちらが効いたのかは、はっきりしません。)
+To undo it, run `defaults delete com.cocolog-nifty.quicktimer.ASURL2SE AppleLanguages`.
 
-### 初回に出る許可ダイアログ
+## How to build
 
-- 初めて Script Editor を操作するときに、Automation(Apple Event)の許可ダイアログが出ます。
-- クリップボードを読むときにも、許可の確認が出ることがあります(作者の環境では、初回だけ出ました)。
+1. Open the Xcode project in this repository.
+2. Leave signing on **Sign to Run Locally** (ad-hoc signing) and run with `⌘R`.
+3. Put the resulting `ASURL2SE.app` in `/Applications`, then pick it as the destination in the settings window.
 
-## ソースの構成
+You don't need an Apple Developer Program membership. It's meant to be built and used on your own Mac.
 
-| ファイル | 役割 |
+### Xcode project settings (if you recreate the project from scratch)
+
+- Start from the macOS → App template (Swift / Storyboard). Afterwards, delete `Main.storyboard`, `ViewController.swift` and the template's `AppDelegate.swift`, and empty "Main storyboard file base name" in Build Settings.
+- **Turn App Sandbox off.** With it on, Apple Events from `osascript` to Script Editor don't go through (the author got a `-600` error).
+- In the Info tab, add a URL Type with URL Schemes `applescript` and Role `Viewer`.
+- In the Info tab, add `Privacy - AppleEvents Sending Usage Description` (`NSAppleEventsUsageDescription`). Writing it in both languages lets it be read either way. (Example: `Script Editor に新規書類を作成するために使用します。 / Used to create a new document in Script Editor.`)
+- Architectures: `arm64`.
+- If the template links any iOS-related SDKs, remove them. (The author removed them at the same time as turning the Sandbox off, so it isn't clear which one fixed the problem.)
+
+### Permission dialogs on first use
+
+- The first time the app operates Script Editor, you get an Automation (Apple Events) permission dialog.
+- Reading the clipboard may also ask for permission (on the author's Mac it appeared only the first time).
+
+## Source layout
+
+| File | Role |
 |---|---|
-| `main.swift` | アプリの起動 |
-| `AppDelegate.swift` | URLの受信、クリップボードの判定、URLの分解とデコード、メニュー、60秒の自動終了 |
-| `ScriptEditorBridge.swift` | `osascript` で Script Editor に新規書類を作る(タイムアウト付き) |
-| `SettingsWindowController.swift` | 設定画面と、設定の保存 |
+| `main.swift` | Starts the app |
+| `AppDelegate.swift` | Receiving URLs, checking the clipboard, parsing and decoding URLs, menus, the 60-second auto-quit |
+| `ScriptEditorBridge.swift` | Creates a new document in Script Editor via `osascript` (with a timeout) |
+| `SettingsWindowController.swift` | The settings window and storing the settings |
+| `L10n.swift` | Switches the on-screen text between Japanese and English |
 
-URLのデコードは、`URLComponents` を使わずに、自前で書いています。Safari の「リンクのアドレスをコピー」は、日本語の部分を読める形に戻してコピーするので、`%XX` と生の日本語が混ざったURLができます。このURLを `URLComponents` に解析させると、`%` が再エンコードされて、デコードされない `%0D` や `%20` が残ることがありました。
+URL decoding is written by hand instead of using `URLComponents`. Safari's "Copy Link Address" turns the percent-encoded Japanese parts back into readable characters, so you end up with a URL that mixes `%XX` and raw Japanese. When Foundation parsed such a URL, the `%` seemed to get encoded again, leaving undecoded `%0D` and `%20` in the result.
 
-## 既知の注意点
+The source comments are in Japanese.
 
-- 動作確認は、作者の Mac(macOS 27)でしかしていません。ほかの環境では、動く保証がありません。
-- Script Editor が未起動のとき、起動時にファイルを開くダイアログが出ることがあります(ターミナルから起動したときに、出るのを確認しました)。
-- Chromium 系のブラウザは、`applescript:` のURLを外に渡さないので、リンクを「リンクのアドレスをコピー」してから、このアプリを起動してください。
+## Known caveats
 
-## ライセンス
+- Only tested on the author's Mac (macOS 27). There's no guarantee it works elsewhere.
+- If Script Editor isn't running, an "open file" dialog may appear when it starts (the author saw this when launching it from Terminal).
+- Chromium-based browsers don't pass `applescript:` URLs to other apps. Use "Copy Link Address" and then launch this app.
 
-[CC0 1.0 Universal](https://creativecommons.org/publicdomain/zero/1.0/deed.ja)。
-著作権などの権利を、可能な範囲で放棄しています。コピーでも、改変でも、再配布でも、商用利用でも、断りなく、自由にどうぞ。無保証です。
+## License
 
-(コードは AI が生成したものなので、法的な扱いは、国によって違うかもしれません。作者は、法律の専門家ではありません。)
+[CC0 1.0 Universal](https://creativecommons.org/publicdomain/zero/1.0/deed.en).
+To the extent possible, all copyright and related rights are waived. Copy, modify, redistribute, or use it commercially, with no need to ask. No warranty.
+
+(The code was generated by an AI, so its legal status may differ from country to country. The author is not a legal expert.)

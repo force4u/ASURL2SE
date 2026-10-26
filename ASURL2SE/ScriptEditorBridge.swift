@@ -56,14 +56,20 @@ nonisolated enum ScriptEditorBridge {
 
         if finished.wait(timeout: .now() + timeout) == .timedOut {
             process.terminate()
-            throw BridgeError(description: "osascript が \(Int(timeout)) 秒以内に終わりませんでした。許可ダイアログが出ていないか確認してください。")
+            throw BridgeError(description: L10n.t(
+                ja: "osascript が \(Int(timeout)) 秒以内に終わりませんでした。許可ダイアログが出ていないか確認してください。",
+                en: "osascript didn't finish within \(Int(timeout)) seconds. Check whether a permission dialog is waiting for you."
+            ))
         }
 
         if process.terminationStatus != 0 {
             let data = errorPipe.fileHandleForReading.readDataToEndOfFile()
             let message = String(decoding: data, as: UTF8.self)
                 .trimmingCharacters(in: .whitespacesAndNewlines)
-            throw BridgeError(description: "osascript が失敗しました(終了コード \(process.terminationStatus))\n\(message)")
+            throw BridgeError(description: L10n.t(
+                ja: "osascript が失敗しました(終了コード \(process.terminationStatus))\n\(message)",
+                en: "osascript failed (exit code \(process.terminationStatus))\n\(message)"
+            ))
         }
     }
 }

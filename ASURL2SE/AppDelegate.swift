@@ -1,6 +1,6 @@
 import AppKit
 
-// ステップ4: 設定画面と、60秒後の自動終了を追加。
+// AppDelegate: アプリ全体の動きを担当する。
 // - A   : applescript: URL を受信 → script を取り出して Script Editor の新規書類に入れる
 // - B-1 : 起動時、クリップボードが applescript: URL → Aと同じ処理
 // - B-2 : 起動時、クリップボードが普通のテキスト → そのまま新規書類に入れる
@@ -9,6 +9,8 @@ import AppKit
 // - 設定画面が開く場合: Optionキーを押して起動 / クリップボードが空 / メニューの「設定…」
 // - 処理が終わってから60秒後に自動終了する。設定画面が開いている間は数えない。
 // スクリプトの実行・保存は一切行わない。
+//
+// 画面に出る文字列は、L10n.t(ja:en:) で日本語と英語を切り替える(macOSの言語設定に従う)。
 
 @MainActor
 final class AppDelegate: NSObject, NSApplicationDelegate {
@@ -128,14 +130,14 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         let urlString = event.paramDescriptor(forKeyword: AEKeyword(keyDirectObject))?.stringValue ?? ""
 
         // 送信元は記録だけする('spid' = keySenderPIDAttr)。判定には使わない。
-        var sender = "不明"
+        var sender = "unknown"
         let keySenderPID: AEKeyword = 0x7370_6964
         if let pidDescriptor = event.attributeDescriptor(forKeyword: keySenderPID) {
             let pid = pidDescriptor.int32Value
             let name = NSRunningApplication(processIdentifier: pid)?.localizedName ?? "?"
             sender = "\(name) (pid \(pid))"
         }
-        NSLog("URL受信: 送信元=%@ 文字数=%d", sender, urlString.count)
+        NSLog("URL received: sender=%@ length=%ld", sender, urlString.count)
 
         // 処理が終わるまでは、自動終了のカウントを止める。
         beginActivity()
@@ -196,10 +198,10 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             await openDocument(script: script, confirm: confirm)
         case .failure(let problem):
             presentText(
-                title: "URLを処理できませんでした",
+                title: L10n.t(ja: "URLを処理できませんでした", en: "Couldn't process the URL"),
                 info: problem.message,
                 body: truncated(urlString),
-                buttons: ["閉じる"]
+                buttons: [L10n.close]
             )
         }
     }
@@ -214,11 +216,17 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     private func extractScript(from urlString: String) -> Result<String, URLProblem> {
         // スキーム(最初の ":" の前)を確認する。
         guard let colon = urlString.firstIndex(of: ":") else {
-            return .failure(URLProblem(message: "URLとして解析できませんでした。(\":\" がありません)"))
+            return .failure(URLProblem(message: L10n.t(
+                ja: "URLとして解析できませんでした。(\":\" がありません)",
+                en: "Couldn't parse it as a URL. (There is no \":\".)"
+            )))
         }
         let scheme = urlString[..<colon].lowercased()
         guard scheme == "applescript" else {
-            return .failure(URLProblem(message: "applescript: 以外のURLは扱いません。(scheme: \(scheme))"))
+            return .failure(URLProblem(message: L10n.t(
+                ja: "applescript: 以外のURLは扱いません。(scheme: \(scheme))",
+                en: "Only applescript: URLs are supported. (scheme: \(scheme))"
+            )))
         }
 
         // クエリ("?" から "#" の手前まで)を取り出す。
@@ -278,13 +286,22 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     private func openDocument(script: String, confirm: Bool) async {
         if confirm {
             let info = script.isEmpty
-                ? "スクリプトの指定がありません。空の新規書類を開きます。"
-                : "下のテキストを、Script Editor の新規書類として開きます。実行はしません。内容を確認してください。"
+                ? L10n.t(
+                    ja: "スクリプトの指定がありません。空の新規書類を開きます。",
+                    en: "No script was specified. A new empty document will be opened."
+                )
+                : L10n.t(
+                    ja: "下のテキストを、Script Editor の新規書類として開きます。実行はしません。内容を確認してください。",
+                    en: "The text below will be opened as a new document in Script Editor. It will not be run. Please review it."
+                )
             let pressed = presentText(
-                title: "Script Editor で開きますか?",
+                title: L10n.t(ja: "Script Editor で開きますか?", en: "Open in Script Editor?"),
                 info: info,
                 body: script,
-                buttons: ["開く", "キャンセル"]
+                buttons: [
+                    L10n.t(ja: "開く", en: "Open"),
+                    L10n.t(ja: "キャンセル", en: "Cancel"),
+                ]
             )
             guard pressed == 0 else { return }
         }
@@ -293,10 +310,13 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             try await ScriptEditorBridge.openNewDocument(text: script)
         } catch {
             presentText(
-                title: "Script Editor で新規書類を作れませんでした",
+                title: L10n.t(
+                    ja: "Script Editor で新規書類を作れませんでした",
+                    en: "Couldn't create a new document in Script Editor"
+                ),
                 info: "",
                 body: truncated("\(error)"),
-                buttons: ["閉じる"]
+                buttons: [L10n.close]
             )
         }
     }
@@ -305,7 +325,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
     /// 長すぎる文字列を切り詰める(エラー表示専用。確認ダイアログでは切り詰めない)。
     private func truncated(_ s: String, limit: Int = 4000) -> String {
-        s.count <= limit ? s : String(s.prefix(limit)) + "\n…(以降省略)"
+        s.count <= limit
+            ? s
+            : String(s.prefix(limit)) + L10n.t(ja: "\n…(以降省略)", en: "\n… (truncated)")
     }
 
     /// 本文をスクロール付きで表示するアラート。押されたボタンの番号(0始まり)を返す。
@@ -355,22 +377,26 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         appItem.submenu = appMenu
         let appName = ProcessInfo.processInfo.processName
         appMenu.addItem(
-            withTitle: "\(appName)について",
+            withTitle: L10n.t(ja: "\(appName)について", en: "About \(appName)"),
             action: #selector(NSApplication.orderFrontStandardAboutPanel(_:)),
             keyEquivalent: ""
         )
         appMenu.addItem(.separator())
-        let settingsItem = NSMenuItem(title: "設定…", action: #selector(showSettings(_:)), keyEquivalent: ",")
+        let settingsItem = NSMenuItem(
+            title: L10n.t(ja: "設定…", en: "Settings…"),
+            action: #selector(showSettings(_:)),
+            keyEquivalent: ","
+        )
         settingsItem.target = self
         appMenu.addItem(settingsItem)
 
         // ファイルメニュー(終了)
         let fileItem = NSMenuItem()
         mainMenu.addItem(fileItem)
-        let fileMenu = NSMenu(title: "ファイル")
+        let fileMenu = NSMenu(title: L10n.t(ja: "ファイル", en: "File"))
         fileItem.submenu = fileMenu
         fileMenu.addItem(
-            withTitle: "終了",
+            withTitle: L10n.t(ja: "終了", en: "Quit"),
             action: #selector(NSApplication.terminate(_:)),
             keyEquivalent: "q"
         )

@@ -1,8 +1,10 @@
 import AppKit
 
-// ステップ4: 設定画面。
+// 設定画面。
 // - applescript: URL の送信先(既定のアプリ)を変更する
 // - 開く前の確認ダイアログを出すかどうかを切り替える
+//
+// 画面に出る文字列は、L10n.t(ja:en:) で日本語と英語を切り替える(macOSの言語設定に従う)。
 
 // MARK: - 保存される設定
 
@@ -41,11 +43,29 @@ final class SettingsWindowController: NSObject, NSWindowDelegate {
     private var hasBeenShown = false
 
     private let popup = NSPopUpButton(frame: .zero, pullsDown: false)
-    private let applyButton = NSButton(title: "この送信先に変更", target: nil, action: nil)
+    private let applyButton = NSButton(
+        title: L10n.t(ja: "この送信先に変更", en: "Set as Destination"),
+        target: nil,
+        action: nil
+    )
     private let currentLabel = NSTextField(labelWithString: "")
     private let statusLabel = NSTextField(wrappingLabelWithString: "")
-    private let confirmURLCheckbox = NSButton(checkboxWithTitle: "URLで届いたスクリプトは、開く前に内容を確認する", target: nil, action: nil)
-    private let confirmClipboardCheckbox = NSButton(checkboxWithTitle: "クリップボードから開くときも、開く前に内容を確認する", target: nil, action: nil)
+    private let confirmURLCheckbox = NSButton(
+        checkboxWithTitle: L10n.t(
+            ja: "URLで届いたスクリプトは、開く前に内容を確認する",
+            en: "Review scripts received via URL before opening them"
+        ),
+        target: nil,
+        action: nil
+    )
+    private let confirmClipboardCheckbox = NSButton(
+        checkboxWithTitle: L10n.t(
+            ja: "クリップボードから開くときも、開く前に内容を確認する",
+            en: "Review clipboard text before opening it, too"
+        ),
+        target: nil,
+        action: nil
+    )
 
     /// 送信先の一覧を作るときに使う、applescript: のURL(中身はなんでもよい)。
     private let probeURL = URL(string: "applescript://com.apple.scripteditor/")!
@@ -59,7 +79,7 @@ final class SettingsWindowController: NSObject, NSWindowDelegate {
         )
         super.init()
 
-        window.title = "設定"
+        window.title = L10n.t(ja: "設定", en: "Settings")
         window.isReleasedWhenClosed = false
         window.delegate = self
         window.contentView = buildContentView()
@@ -86,7 +106,10 @@ final class SettingsWindowController: NSObject, NSWindowDelegate {
     private func buildContentView() -> NSView {
         let container = NSView()
 
-        let heading = NSTextField(labelWithString: "applescript: URL の送信先")
+        let heading = NSTextField(labelWithString: L10n.t(
+            ja: "applescript: URL の送信先",
+            en: "Destination for applescript: URLs"
+        ))
         heading.font = NSFont.boldSystemFont(ofSize: 13)
 
         currentLabel.lineBreakMode = .byTruncatingMiddle
@@ -109,10 +132,12 @@ final class SettingsWindowController: NSObject, NSWindowDelegate {
         confirmClipboardCheckbox.target = self
         confirmClipboardCheckbox.action = #selector(toggleConfirmClipboard(_:))
 
-        let note = NSTextField(wrappingLabelWithString:
-            "一覧には、applescript: のURLを受け取れるアプリが出ます。送信先の変更は、このアプリを終了したあとも有効です。"
-            + "このアプリは、処理が終わってから60秒後に自動で終了します。この画面を開いている間は終了しません。"
-        )
+        let note = NSTextField(wrappingLabelWithString: L10n.t(
+            ja: "一覧には、applescript: のURLを受け取れるアプリが出ます。送信先の変更は、このアプリを終了したあとも有効です。"
+                + "このアプリは、処理が終わってから60秒後に自動で終了します。この画面を開いている間は終了しません。",
+            en: "The list shows apps that can receive applescript: URLs. The change stays in effect after you quit this app. "
+                + "This app quits by itself 60 seconds after it finishes handling something, but not while this window is open."
+        ))
         note.font = NSFont.systemFont(ofSize: 11)
         note.textColor = .secondaryLabelColor
         note.preferredMaxLayoutWidth = 520
@@ -167,7 +192,7 @@ final class SettingsWindowController: NSObject, NSWindowDelegate {
         for url in apps {
             var title = "\(displayName(of: url))  —  \(abbreviatedPath(of: url))"
             if url.standardizedFileURL.path == selfURL.standardizedFileURL.path {
-                title += "  [このアプリ]"
+                title += L10n.t(ja: "  [このアプリ]", en: "  [This app]")
             }
             let item = NSMenuItem(title: title, action: nil, keyEquivalent: "")
             item.representedObject = url
@@ -182,9 +207,17 @@ final class SettingsWindowController: NSObject, NSWindowDelegate {
         }
 
         if let current {
-            currentLabel.stringValue = "現在の送信先: \(displayName(of: current))  (\(abbreviatedPath(of: current)))"
+            let name = displayName(of: current)
+            let path = abbreviatedPath(of: current)
+            currentLabel.stringValue = L10n.t(
+                ja: "現在の送信先: \(name)  (\(path))",
+                en: "Current destination: \(name)  (\(path))"
+            )
         } else {
-            currentLabel.stringValue = "現在の送信先: なし(受け取るアプリがありません)"
+            currentLabel.stringValue = L10n.t(
+                ja: "現在の送信先: なし(受け取るアプリがありません)",
+                en: "Current destination: none (no app can receive them)"
+            )
         }
 
         confirmURLCheckbox.state = Preferences.confirmForURLTrigger ? .on : .off
@@ -204,16 +237,20 @@ final class SettingsWindowController: NSObject, NSWindowDelegate {
     @objc private func applyDestination(_ sender: Any?) {
         guard let appURL = popup.selectedItem?.representedObject as? URL else { return }
 
-        statusLabel.stringValue = "変更しています…"
+        statusLabel.stringValue = L10n.t(ja: "変更しています…", en: "Changing…")
         applyButton.isEnabled = false
 
         Task {
             let error = await Self.setDefaultApplication(at: appURL)
             self.applyButton.isEnabled = true
             if let error {
-                self.statusLabel.stringValue = "変更できませんでした: \(error.localizedDescription)"
+                let message = error.localizedDescription
+                self.statusLabel.stringValue = L10n.t(
+                    ja: "変更できませんでした: \(message)",
+                    en: "Couldn't change it: \(message)"
+                )
             } else {
-                self.statusLabel.stringValue = "変更しました。"
+                self.statusLabel.stringValue = L10n.t(ja: "変更しました。", en: "Changed.")
             }
             self.refresh()
         }
