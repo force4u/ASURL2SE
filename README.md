@@ -99,6 +99,14 @@ You don't need an Apple Developer Program membership. It's meant to be built and
 - The first time the app operates Script Editor, you get an Automation (Apple Events) permission dialog.
 - Reading the clipboard may also ask for permission (on the author's Mac it appeared only the first time).
 
+**You must allow the app to control Script Editor.** Without that permission, it can't create documents. If you clicked "Don't Allow" by accident, you can turn it on later here:
+
+System Settings → Privacy & Security → Automation → ASURL2SE → switch on **Script Editor**
+
+<img src="Documents/Images/tcc_en_1280x358.png" width="640" alt="System Settings → Privacy & Security → Automation: ASURL2SE is allowed to control Script Editor">
+
+(The image is a screenshot of that settings screen.)
+
 ## Source layout
 
 | File | Role |
