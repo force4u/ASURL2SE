@@ -321,6 +321,23 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         }
     }
 
+
+    /// Dockアイコンを右クリック(または長押し)したときのメニュー。
+    /// ここで返した項目が、標準の項目(オプション・終了など)の上に追加される。
+    func applicationDockMenu(_ sender: NSApplication) -> NSMenu? {
+        let menu = NSMenu()
+        let item = NSMenuItem(
+            title: L10n.t(ja: "設定…", en: "Settings…"),
+            action: #selector(showSettings(_:)),
+            keyEquivalent: ""
+        )
+        item.target = self
+        menu.addItem(item)
+        return menu
+    }
+
+
+
     // MARK: - 表示
 
     /// 長すぎる文字列を切り詰める(エラー表示専用。確認ダイアログでは切り詰めない)。
